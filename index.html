@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zênite — Reconhecimento</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --ouro: #B8860B;
+    --ouro-claro: #D4A017;
+    --ouro-fundo: #FDF8EE;
+    --ouro-borda: #E8D5A3;
+    --escuro: #1A1A1A;
+    --medio: #555;
+    --claro: #888;
+    --branco: #fff;
+    --erro: #c0392b;
+    --sucesso: #27ae60;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F9F4EA;
+    color: var(--escuro);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* HEADER */
+  .header {
+    width: 100%;
+    background: var(--escuro);
+    padding: 24px 20px 20px;
+    text-align: center;
+    border-bottom: 3px solid var(--ouro);
+  }
+  .header-simbolo {
+    font-size: 22px;
+    color: var(--ouro);
+    letter-spacing: 6px;
+    margin-bottom: 6px;
+  }
+  .header-marca {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    color: var(--ouro);
+    font-weight: 700;
+    letter-spacing: 3px;
+  }
+  .header-salao {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* CONTAINER */
+  .container {
+    width: 100%;
+    max-width: 480px;
+    padding: 32px 20px 60px;
+  }
+
+  /* TELA */
+  .tela { display: none; }
+  .tela.ativa { display: block; }
+
+  /* CARD */
+  .card {
+    background: var(--branco);
+    border-radius: 16px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border: 1px solid var(--ouro-borda);
+    margin-bottom: 16px;
+  }
+
+  .card-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--escuro);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .card-subtitulo {
+    font-size: 14px;
+    color: var(--claro);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  /* INPUT */
+  .campo-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--medio);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .campo-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--ouro-borda);
+    border-radius: 10px;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    color: var(--escuro);
+    background: var(--ouro-fundo);
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 2px;
+  }
+  .campo-input:focus { border-color: var(--ouro); }
+  .campo-input::placeholder { color: #ccc; letter-spacing: 0; font-size: 15px; }
+
+  /* BOTÃO */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    letter-spacing: 0.3px;
+  }
+  .btn-ouro {
+    background: var(--ouro);
+    color: var(--branco);
+  }
+  .btn-ouro:hover { background: var(--ouro-claro); transform: translateY(-1px); }
+  .btn-ouro:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+  .btn-outline {
+    background: transparent;
+    color: var(--ouro);
+    border: 2px solid var(--ouro);
+    margin-top: 12px;
+  }
+  .btn-outline:hover { background: var(--ouro-fundo); }
+
+  /* DIVISOR */
+  .divisor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--claro);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .divisor::before, .divisor::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ouro-borda);
+  }
+
+  /* OPÇÕES DA ENQUETE */
+  .opcoes { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .opcao {
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 2px solid var(--ouro-borda);
+    background: var(--ouro-fundo);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--escuro);
+    transition: all 0.2s;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.4;
+  }
+  .opcao:hover { border-color: var(--ouro); background: #FEF9EE; }
+  .opcao.selecionada {
+    border-color: var(--ouro);
+    background: var(--ouro);
+    color: var(--branco);
+    font-weight: 500;
+  }
+
+  /* PROGRESSO */
+  .progresso {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .progresso-passo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--ouro-borda);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--claro);
+    transition: all 0.3s;
+  }
+  .progresso-passo.atual {
+    border-color: var(--ouro);
+    background: var(--ouro);
+    color: var(--branco);
+  }
+  .progresso-passo.feito {
+    border-color: var(--sucesso);
+    background: var(--sucesso);
+    color: var(--branco);
+  }
+  .progresso-linha {
+    flex: 1;
+    height: 2px;
+    background: var(--ouro-borda);
+  }
+  .progresso-linha.feita { background: var(--sucesso); }
+
+  /* NÚMERO FORMATADO */
+  .numero-display {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ouro);
+    text-align: center;
+    padding: 12px;
+    background: var(--ouro-fundo);
+    border-radius: 8px;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+    border: 1px solid var(--ouro-borda);
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* MENSAGEM */
+  .msg {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+    line-height: 1.5;
+  }
+  .msg.erro { background: #fdecea; color: var(--erro); border: 1px solid #f5c6c2; display: block; }
+  .msg.info { background: #e8f4fd; color: #1a6fa8; border: 1px solid #bee3f8; display: block; }
+  .msg.sucesso { background: #eafaf1; color: var(--sucesso); border: 1px solid #a9dfbf; display: block; }
+
+  /* TELA FINAL */
+  .final-icone {
+    font-size: 64px;
+    text-align: center;
+    margin-bottom: 16px;
+    animation: pulsa 1.5s ease-in-out infinite alternate;
+  }
+  @keyframes pulsa {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
+  }
+  .final-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    text-align: center;
+    color: var(--escuro);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .final-texto {
+    font-size: 14px;
+    color: var(--medio);
+    text-align: center;
+    line-height: 1.7;
+  }
+  .final-numero {
+    font-size: 13px;
+    color: var(--claro);
+    text-align: center;
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* TAG DE ENTRADAS */
+  .tag-entradas {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ouro);
+    color: var(--branco);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 16px auto 0;
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+  }
+
+  /* MANIFESTO */
+  .manifesto {
+    font-size: 13px;
+    color: var(--medio);
+    text-align: center;
+    line-height: 1.8;
+    font-style: italic;
+    padding: 20px;
+    border-top: 1px solid var(--ouro-borda);
+    margin-top: 24px;
+  }
+
+  /* LOADING */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    color: var(--ouro);
+    font-size: 14px;
+  }
+  .loading.ativo { display: block; }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--ouro-borda);
+    border-top-color: var(--ouro);
+    border-radius: 50%;
+    animation: gira 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+  @keyframes gira { to { transform: rotate(360deg); } }
+
+  /* RODAPÉ */
+  .rodape {
+    text-align: center;
+    padding: 24px 20px;
+    font-size: 11px;
+    color: #bbb;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-simbolo">✦ ✦ ✦</div>
+  <div class="header-marca">ZÊNITE</div>
+  <div class="header-salao" id="nome-salao">Carregando...</div>
+</div>
+
+<div class="container">
+
+  <!-- TELA 1: NÚMERO -->
+  <div class="tela ativa" id="tela-numero">
+    <div class="card">
+      <div class="card-titulo">Bem-vinda ao Zênite ✦</div>
+      <div class="card-subtitulo">Informe seu número de WhatsApp para participar do sorteio e registrar sua visita.</div>
+      <label class="campo-label">Seu WhatsApp</label>
+      <input class="campo-input" type="tel" id="input-numero" placeholder="(31) 99999-9999" maxlength="15">
+      <div id="msg-numero" class="msg"></div>
+      <button class="btn btn-ouro" onclick="verificarNumero()" id="btn-numero">Continuar</button>
+    </div>
+    <div class="manifesto">
+      "Sua opinião não fica guardada numa gaveta.<br>
+      Ela define quais salões merecem o selo Zênite<br>
+      — e eleva o padrão de atendimento<br>
+      para todas as mulheres."
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    Verificando...
+  </div>
+
+  <!-- TELA 2: JÁ VOTOU RECENTEMENTE -->
+  <div class="tela" id="tela-ja-votou">
+    <div class="card">
+      <div class="final-icone">✦</div>
+      <div class="final-titulo">Sua avaliação já está registrada</div>
+      <p class="final-texto">Você avaliou este salão recentemente. Sua opinião já está contribuindo para elevar o padrão de atendimento.</p>
+      <p class="final-numero" id="info-proximo-voto"></p>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Participar do sorteio</div>
+      <div class="card-subtitulo">Você pode acumular entradas no sorteio a cada visita, mesmo sem avaliar novamente.</div>
+      <div id="numero-confirmado-sorteio" class="numero-display"></div>
+      <button class="btn btn-ouro" onclick="registrarApenasEntrada()">Registrar minha visita ✦</button>
+    </div>
+  </div>
+
+  <!-- TELA 3: ESCOLHA -->
+  <div class="tela" id="tela-escolha">
+    <div class="card">
+      <div class="numero-display" id="numero-confirmado"></div>
+      <div class="card-titulo">O que deseja fazer?</div>
+      <div class="card-subtitulo">Você pode participar do sorteio, avaliar o atendimento, ou fazer os dois.</div>
+      <button class="btn btn-ouro" onclick="irParaEnquete()">✦ Avaliar e participar do sorteio</button>
+      <button class="btn btn-outline" onclick="apenasEntrada()">Só participar do sorteio</button>
+    </div>
+  </div>
+
+  <!-- TELA 4: ENQUETE -->
+  <div class="tela" id="tela-enquete">
+    <div class="progresso" id="progresso-enquete">
+      <div class="progresso-passo atual" id="p1">1</div>
+      <div class="progresso-linha" id="l1"></div>
+      <div class="progresso-passo" id="p2">2</div>
+      <div class="progresso-linha" id="l2"></div>
+      <div class="progresso-passo" id="p3">3</div>
+    </div>
+
+    <!-- Pergunta 1 -->
+    <div class="card" id="pergunta-1">
+      <div class="card-titulo">O resultado foi o que você esperava?</div>
+      <div class="card-subtitulo">Pense no que você pediu e no que saiu.</div>
+      <div class="opcoes">
+        <button class="opcao" onclick="selecionarOpcao(1, 'sim', this)">✓ Sim, saí como planejei</button>
+        <button class="opcao" onclick="selecionarOpcao(1, 'nao', this)">✗ Ficou diferente do que pedi</button>
+      </div>
+    </div>
+
+    <!-- Pergunta 2 -->
+    <div class="card" id="pergunta-2" style="display:none">
+      <div class="card-titulo">Os produtos e cuidados usados no seu atendimento foram de qualidade?</div>
+      <div class="card-subtitulo">Pense nos produtos aplicados e no cuidado na execução.</div>
+      <div class="opcoes">
+        <button class="opcao" onclick="selecionarOpcao(2, 'sim', this)">✓ Sim, fiquei satisfeita</button>
+        <button class="opcao" onclick="selecionarOpcao(2, 'nao', this)">✗ Poderia ser melhor</button>
+      </div>
+    </div>
+
+    <!-- Pergunta 3 -->
+    <div class="card" id="pergunta-3" style="display:none">
+      <div class="card-titulo">Tem algum ponto que poderia melhorar no seu atendimento?</div>
+      <div class="card-subtitulo">Sua resposta vai diretamente para o salão — de forma anônima.</div>
+      <div class="opcoes">
+        <button class="opcao" onclick="selecionarOpcao(3, 'perfeito', this)">✦ Foi perfeito</button>
+        <button class="opcao" onclick="selecionarOpcao(3, 'melhora', this)">→ Tem um ponto a melhorar</button>
+      </div>
+      <div id="campo-comentario" style="display:none; margin-top:16px;">
+        <label class="campo-label">O que poderia melhorar? (opcional)</label>
+        <textarea id="comentario" style="width:100%;padding:12px;border:2px solid var(--ouro-borda);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;resize:none;height:80px;background:var(--ouro-fundo);outline:none;" placeholder="Escreva aqui se quiser..."></textarea>
+      </div>
+      <button class="btn btn-ouro" id="btn-finalizar" onclick="finalizarEnquete()" style="display:none; margin-top:16px;">Enviar avaliação ✦</button>
+    </div>
+  </div>
+
+  <!-- TELA 5: SUCESSO COMPLETO -->
+  <div class="tela" id="tela-sucesso">
+    <div class="card">
+      <div class="final-icone">♛</div>
+      <div class="final-titulo">Obrigada, rainha ✦</div>
+      <p class="final-texto">Sua avaliação foi registrada e sua entrada no sorteio confirmada.<br><br>Você está ajudando a construir um padrão de atendimento que todas as mulheres merecem.</p>
+      <div id="tag-entradas-total" class="tag-entradas">✦ 1 entrada no sorteio</div>
+      <p class="final-numero" id="numero-final"></p>
+    </div>
+    <div class="manifesto">
+      "Porque você já nasceu rainha<br>— só falta o reconhecimento."
+    </div>
+  </div>
+
+  <!-- TELA 6: SUCESSO SÓ ENTRADA -->
+  <div class="tela" id="tela-sucesso-entrada">
+    <div class="card">
+      <div class="final-icone">✦</div>
+      <div class="final-titulo">Entrada registrada!</div>
+      <p class="final-texto">Sua participação no sorteio está confirmada para este mês.</p>
+      <div id="tag-entradas-apenas" class="tag-entradas">✦ 1 entrada no sorteio</div>
+      <p class="final-numero" id="numero-final-entrada"></p>
+    </div>
+    <div class="manifesto">
+      "Porque você já nasceu rainha<br>— só falta o reconhecimento."
+    </div>
+  </div>
+
+</div>
+
+<div class="rodape">✦ ZÊNITE — Reconhecimento que você merece ✦</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAIAwPBYVsR25xC_dHgbdpuC9sxJwn8wFw",
+  authDomain: "zenite-mulher.firebaseapp.com",
+  projectId: "zenite-mulher",
+  storageBucket: "zenite-mulher.firebasestorage.app",
+  messagingSenderId: "597468928760",
+  appId: "1:597468928760:web:9c9a56d7ebb5b74d88b90d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Pega o ID do salão pela URL: ?salao=SALAO_ID
+const params = new URLSearchParams(window.location.search);
+const salaoId = params.get('salao') || 'demo';
+
+// Estado global
+window._estado = {
+  numero: '',
+  salaoId,
+  salaoNome: '',
+  respostas: {},
+  totalEntradas: 0,
+  jaVotou: false
+};
+
+// Carrega nome do salão
+async function carregarSalao() {
+  try {
+    const salaoDoc = await getDoc(doc(db, 'saloes', salaoId));
+    if (salaoDoc.exists()) {
+      window._estado.salaoNome = salaoDoc.data().nome || 'Salão Parceiro Zênite';
+    } else {
+      window._estado.salaoNome = 'Salão Parceiro Zênite';
+    }
+  } catch(e) {
+    window._estado.salaoNome = 'Salão Parceiro Zênite';
+  }
+  document.getElementById('nome-salao').textContent = window._estado.salaoNome;
+}
+carregarSalao();
+
+// Formata número
+function formatarNumero(n) {
+  const nums = n.replace(/\D/g, '');
+  if (nums.length <= 2) return `(${nums}`;
+  if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
+  if (nums.length <= 11) return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+  return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7,11)}`;
+}
+
+document.getElementById('input-numero').addEventListener('input', function() {
+  this.value = formatarNumero(this.value);
+});
+
+document.getElementById('input-numero').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') verificarNumero();
+});
+
+function mostrarTela(id) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById('loading').classList.remove('ativo');
+  const tela = document.getElementById(id);
+  if (tela) tela.classList.add('ativa');
+}
+
+function mostrarLoading() {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById('loading').classList.add('ativo');
+}
+
+// VERIFICAR NÚMERO
+window.verificarNumero = async function() {
+  const input = document.getElementById('input-numero');
+  const numeros = input.value.replace(/\D/g, '');
+  const msg = document.getElementById('msg-numero');
+  msg.className = 'msg';
+
+  if (numeros.length < 10) {
+    msg.className = 'msg erro';
+    msg.textContent = 'Por favor, informe um número válido com DDD.';
+    return;
+  }
+
+  window._estado.numero = numeros;
+  mostrarLoading();
+
+  try {
+    const SETE_DIAS = 7 * 24 * 60 * 60 * 1000;
+    const chave = `${salaoId}_${numeros}`;
+    const votoDoc = await getDoc(doc(db, 'votos', chave));
+    
+    // Conta entradas do mês atual
+    const mes = new Date().toISOString().slice(0, 7);
+    const entradaDoc = await getDoc(doc(db, 'entradas', `${chave}_${mes}`));
+    const totalEntradas = entradaDoc.exists() ? (entradaDoc.data().total || 0) : 0;
+    window._estado.totalEntradas = totalEntradas;
+
+    if (votoDoc.exists()) {
+      const ultimoVoto = votoDoc.data().timestamp?.toMillis?.() || 0;
+      const agora = Date.now();
+      if (agora - ultimoVoto < SETE_DIAS) {
+        // Já votou recentemente
+        const diasRestantes = Math.ceil((SETE_DIAS - (agora - ultimoVoto)) / (24 * 60 * 60 * 1000));
+        document.getElementById('info-proximo-voto').textContent = 
+          `Você poderá avaliar novamente em ${diasRestantes} dia${diasRestantes > 1 ? 's' : ''}.`;
+        document.getElementById('numero-confirmado-sorteio').textContent = 
+          `(${numeros.slice(0,2)}) ${numeros.slice(2,7)}-${numeros.slice(7)}`;
+        window._estado.jaVotou = true;
+        mostrarTela('tela-ja-votou');
+        return;
+      }
+    }
+
+    // Pode votar — mostra escolha
+    document.getElementById('numero-confirmado').textContent = 
+      `(${numeros.slice(0,2)}) ${numeros.slice(2,7)}-${numeros.slice(7)}`;
+    mostrarTela('tela-escolha');
+
+  } catch(e) {
+    document.getElementById('loading').classList.remove('ativo');
+    mostrarTela('tela-numero');
+    const msg = document.getElementById('msg-numero');
+    msg.className = 'msg erro';
+    msg.textContent = 'Erro de conexão. Tente novamente.';
+  }
+};
+
+// IR PARA ENQUETE
+window.irParaEnquete = function() {
+  mostrarTela('tela-enquete');
+};
+
+// APENAS ENTRADA (sem avaliar)
+window.apenasEntrada = async function() {
+  mostrarLoading();
+  await registrarEntrada();
+  const total = window._estado.totalEntradas + 1;
+  document.getElementById('tag-entradas-apenas').textContent = 
+    `✦ ${total} entrada${total > 1 ? 's' : ''} no sorteio este mês`;
+  document.getElementById('numero-final-entrada').textContent = 
+    `Número: (${window._estado.numero.slice(0,2)}) ${window._estado.numero.slice(2,7)}-${window._estado.numero.slice(7)}`;
+  mostrarTela('tela-sucesso-entrada');
+};
+
+// REGISTRAR APENAS ENTRADA (tela já votou)
+window.registrarApenasEntrada = async function() {
+  mostrarLoading();
+  await registrarEntrada();
+  const total = window._estado.totalEntradas + 1;
+  document.getElementById('tag-entradas-apenas').textContent = 
+    `✦ ${total} entrada${total > 1 ? 's' : ''} no sorteio este mês`;
+  document.getElementById('numero-final-entrada').textContent = 
+    `Número: (${window._estado.numero.slice(0,2)}) ${window._estado.numero.slice(2,7)}-${window._estado.numero.slice(7)}`;
+  mostrarTela('tela-sucesso-entrada');
+};
+
+// REGISTRAR ENTRADA NO SORTEIO
+async function registrarEntrada() {
+  const mes = new Date().toISOString().slice(0, 7);
+  const chaveEntrada = `${salaoId}_${window._estado.numero}_${mes}`;
+  try {
+    const entradaRef = doc(db, 'entradas', chaveEntrada);
+    const entradaDoc = await getDoc(entradaRef);
+    if (entradaDoc.exists()) {
+      await updateDoc(entradaRef, {
+        total: increment(1),
+        ultimaVisita: serverTimestamp()
+      });
+      window._estado.totalEntradas = entradaDoc.data().total || 0;
+    } else {
+      await setDoc(entradaRef, {
+        numero: window._estado.numero,
+        salaoId,
+        mes,
+        total: 1,
+        primeirAVisita: serverTimestamp(),
+        ultimaVisita: serverTimestamp()
+      });
+      window._estado.totalEntradas = 0;
+    }
+  } catch(e) { console.error(e); }
+}
+
+// LÓGICA DA ENQUETE
+let perguntaAtual = 1;
+window._estado.respostas = {};
+
+window.selecionarOpcao = function(pergunta, valor, btn) {
+  // Remove seleção anterior na mesma pergunta
+  btn.closest('.opcoes').querySelectorAll('.opcao').forEach(o => o.classList.remove('selecionada'));
+  btn.classList.add('selecionada');
+  window._estado.respostas[`p${pergunta}`] = valor;
+
+  // Lógica de avanço
+  setTimeout(() => {
+    if (pergunta === 1) {
+      document.getElementById('p1').classList.remove('atual');
+      document.getElementById('p1').classList.add('feito');
+      document.getElementById('l1').classList.add('feita');
+      document.getElementById('p2').classList.add('atual');
+      document.getElementById('pergunta-1').style.display = 'none';
+      document.getElementById('pergunta-2').style.display = 'block';
+    } else if (pergunta === 2) {
+      document.getElementById('p2').classList.remove('atual');
+      document.getElementById('p2').classList.add('feito');
+      document.getElementById('l2').classList.add('feita');
+      document.getElementById('p3').classList.add('atual');
+      document.getElementById('pergunta-2').style.display = 'none';
+      document.getElementById('pergunta-3').style.display = 'block';
+    } else if (pergunta === 3) {
+      if (valor === 'melhora') {
+        document.getElementById('campo-comentario').style.display = 'block';
+      } else {
+        document.getElementById('campo-comentario').style.display = 'none';
+      }
+      document.getElementById('btn-finalizar').style.display = 'block';
+    }
+  }, 300);
+};
+
+window.finalizarEnquete = async function() {
+  document.getElementById('btn-finalizar').disabled = true;
+  document.getElementById('btn-finalizar').textContent = 'Enviando...';
+  mostrarLoading();
+
+  const comentario = document.getElementById('comentario').value.trim();
+  const mes = new Date().toISOString().slice(0, 7);
+  const chave = `${salaoId}_${window._estado.numero}`;
+
+  try {
+    // Salva o voto com timestamp
+    await setDoc(doc(db, 'votos', chave), {
+      numero: window._estado.numero,
+      salaoId,
+      timestamp: serverTimestamp(),
+      respostas: window._estado.respostas,
+      comentario: comentario || null
+    });
+
+    // Atualiza índice do salão
+    const indiceRef = doc(db, 'indices', `${salaoId}_${mes}`);
+    const indiceDoc = await getDoc(indiceRef);
+    
+    const r = window._estado.respostas;
+    const positivo = r.p1 === 'sim' && r.p2 === 'sim' && r.p3 === 'perfeito';
+    const parcial = (r.p1 === 'sim' || r.p2 === 'sim') && r.p3 !== 'perfeito';
+
+    if (indiceDoc.exists()) {
+      await updateDoc(indiceRef, {
+        totalVotos: increment(1),
+        votosPositivos: increment(positivo ? 1 : 0),
+        votosParciais: increment(parcial ? 1 : 0),
+        ultimoVoto: serverTimestamp()
+      });
+    } else {
+      await setDoc(indiceRef, {
+        salaoId,
+        mes,
+        totalVotos: 1,
+        votosPositivos: positivo ? 1 : 0,
+        votosParciais: parcial ? 1 : 0,
+        ultimoVoto: serverTimestamp()
+      });
+    }
+
+    // Se tem comentário, salva separado para o salão consultar
+    if (comentario) {
+      await addDoc(collection(db, 'comentarios'), {
+        salaoId,
+        mes,
+        comentario,
+        timestamp: serverTimestamp()
+      });
+    }
+
+    // Registra entrada no sorteio
+    await registrarEntrada();
+
+    const total = window._estado.totalEntradas + 1;
+    document.getElementById('tag-entradas-total').textContent = 
+      `✦ ${total} entrada${total > 1 ? 's' : ''} no sorteio este mês`;
+    document.getElementById('numero-final').textContent = 
+      `Número: (${window._estado.numero.slice(0,2)}) ${window._estado.numero.slice(2,7)}-${window._estado.numero.slice(7)}`;
+    mostrarTela('tela-sucesso');
+
+  } catch(e) {
+    console.error(e);
+    mostrarTela('tela-enquete');
+    document.getElementById('btn-finalizar').disabled = false;
+    document.getElementById('btn-finalizar').textContent = 'Enviar avaliação ✦';
+  }
+};
+
+</script>
+</body>
+</html>
